@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Realtime Database</title>
+</head>
+<body>
+  <h1>Realtime Database Example</h1>
+  <div id="messages"></div>
+  <input type="text" id="username" placeholder="Username">
+  <input type="text" id="message" placeholder="Message">
+  <button onclick="sendMessage()">Send</button>
+
+  <!-- Use the complete CDN link for socket.io.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+  <script>
+    const socket = io('http://localhost:3000');
+
+    // Function to handle new messages received from the server
+    function handleNewMessage(message) {
+      const messagesDiv = document.getElementById('messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.innerHTML = `<strong>${message.username}:</strong> ${message.message}`;
+      messagesDiv.appendChild(messageDiv);
+    }
+
+    // Function to send a new message to the server
+    function sendMessage() {
+      const username = document.getElementById('username').value;
+      const message = document.getElementById('message').value;
+      if (username && message) {
+        socket.emit('newMessage', { username, message });
+        document.getElementById('message').value = '';
+      }
+    }
+
+    // Receive initial data from the server
+    socket.on('initialData', (messages) => {
+      const messagesDiv = document.getElementById('messages');
+      messages.forEach((message) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.innerHTML = `<strong>${message.username}:</strong> ${message.message}`;
+        messagesDiv.appendChild(messageDiv);
+      });
+    });
+
+    // Listen for new messages from the server
+    socket.on('newMessage', handleNewMessage);
+  </script>
+</body>
+</html>
