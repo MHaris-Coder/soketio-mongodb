@@ -143,3 +143,21 @@ app.post('/api/savejson', async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+
+
+
+
+
+// axios.post('http://localhost:5000/api/savejson', {
+//                     event_style: "seating",
+//                     canvase: "multiple",
+//                     name: stateReplica?.templateName,
+//                     template_json: Arr,
+//                     seats_json: chairs,
+//                     seating_id: stateReplica?.seating?.id ?? 'rFoGtHJT'
+//                 }).then((res) => {
+//                     console.log('res', res)
+//                 }).catch((err) => {
+//                     console.log('err', err?.message)
+//                 });
