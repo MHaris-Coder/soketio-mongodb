@@ -107,7 +107,7 @@ async function createTemplateJsonDirIfNotExist() {
   }
 }
 
-// POST endpoint to handle incoming JSON data
+
 app.post('/api/savejson', async (req, res) => {
   const jsonData = req.body;
   const jsonString = await JSON.stringify(jsonData, null, 2);
@@ -130,6 +130,22 @@ app.post('/api/savejson', async (req, res) => {
     }
   });
 });
+
+app.get('/api/fetchjson/:seating_id', async (req, res) => {
+  const { seating_id } = req.params;
+
+  try {
+    const filePath = `template_json/${seating_id}.json`;
+    await fs.access(filePath);
+
+    const jsonData = await fs.readFile(filePath, 'utf-8');
+    res.status(200).json(JSON.parse(jsonData));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err?.message);
+  }
+});
+
 
 // Start the server
 server.listen(PORT, () => {
