@@ -84,8 +84,6 @@ io.on('connection', (socket) => {
   });
 });
 
-
-
 const generateRandomId = (length) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let randomId = '';
@@ -112,52 +110,28 @@ async function createTemplateJsonDirIfNotExist() {
 // POST endpoint to handle incoming JSON data
 app.post('/api/savejson', async (req, res) => {
   const jsonData = req.body;
-  const fileName = `${generateRandomId(8)}.json`;
   const jsonString = await JSON.stringify(jsonData, null, 2);
+  let fileName = `${generateRandomId(8)}.json`;
 
   await createTemplateJsonDirIfNotExist();
 
+  // for update file
   if(jsonData?.seating_id) {
-    // update json
-    console.log('update json file')
-
-    await fs.writeFile(`template_json/${jsonData?.seating_id}`, JSON.stringify(jsonString, null, 2));
+    fileName = jsonData?.seating_id;
   }
-  else {
-    console.log('create json file')
 
-    // Save JSON data to a file (e.g., data.json)
-    fs.writeFile(`template_json/${fileName}`, jsonString, (err) => {
-      if (err) {
-          console.error(err);
-          res.status(500).send('Internal Server Error');
-      } else {
-          console.log('JSON data saved successfully.');
-          res.status(200).send('JSON data saved successfully.');
-      }
-    });
-  }
+  fs.writeFile(`template_json/${fileName}.json`, jsonString, (err) => {
+    if (err) {
+        console.error(err);
+        res.status(500).send(err?.message);
+    } else {
+        console.log('JSON data saved successfully.');
+        res.status(200).send('JSON data saved successfully.');
+    }
+  });
 });
 
 // Start the server
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
-
-
-
-
-
-// axios.post('http://localhost:5000/api/savejson', {
-//                     event_style: "seating",
-//                     canvase: "multiple",
-//                     name: stateReplica?.templateName,
-//                     template_json: Arr,
-//                     seats_json: chairs,
-//                     seating_id: stateReplica?.seating?.id ?? 'rFoGtHJT'
-//                 }).then((res) => {
-//                     console.log('res', res)
-//                 }).catch((err) => {
-//                     console.log('err', err?.message)
-//                 });
